@@ -15,6 +15,7 @@
     h1 { margin:0 0 8px; font-size:clamp(30px,5vw,48px); letter-spacing:-.03em; }
     p { margin:0; color:var(--muted); }
     .card { display:block; padding:24px; border:1px solid var(--line); border-radius:18px; background:var(--panel); color:inherit; text-decoration:none; box-shadow:0 10px 30px rgb(0 0 0 / .04); transition:transform .15s ease,border-color .15s ease; }
+    .card + .card { margin-top:16px; }
     .card:hover { transform:translateY(-2px); border-color:var(--brand); }
     .meta { color:var(--brand); font-weight:650; font-size:14px; }
     h2 { margin:7px 0 8px; font-size:24px; }
@@ -29,8 +30,14 @@
       <h1>静态分析报告库</h1>
       <p>面向同事分享的经营数据快照与分析结论。</p>
     </header>
+    <a class="card" href="reports/2026-07-14-june-operating-analysis/">
+      <div class="meta">最新报告 · 2026 年 6 月</div>
+      <h2>2026 年 6 月经营分析报告</h2>
+      <p>覆盖 175 家门店，聚焦净毛利结构、重点异常门店、成本费用与可执行建议。</p>
+      <div class="tags"><span class="tag">128,264 单</span><span class="tag">收入 594.54 万元</span><span class="tag">净毛利率 30.2%</span></div>
+    </a>
     <a class="card" href="reports/2026-07-13-operating-analysis/">
-      <div class="meta">最新报告 · 2026 年 7 月 13 日</div>
+      <div class="meta">历史报告 · 2026 年 7 月 13 日</div>
       <h2>经营分析报告</h2>
       <p>覆盖 6 家门店、20 条门店×渠道记录，包含整体经营、门店表现、渠道利润结构与行动建议。</p>
       <div class="tags"><span class="tag">2,299 单</span><span class="tag">收入 6.50 万元</span><span class="tag">修正后净毛利率 13.2%</span></div>

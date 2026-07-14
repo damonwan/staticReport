@@ -1,0 +1,175 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "7月13日经营分析报告",
+    "description": "六家门店日维度经营表现快照",
+    "generatedAt": "2026-07-14T12:00:00+08:00",
+    "sources": [
+      {
+        "id": "operating-analysis",
+        "label": "秒界后台导出 · 日维度经营分析.xlsx",
+        "path": "日维度经营分析.xlsx",
+        "query": {
+          "engine": "SQLite",
+          "sql": "WITH base AS (SELECT * FROM operating_analysis WHERE 日期 = '2026-07-13'), store_summary AS (SELECT 'store' AS grain, 门店名称 AS name, SUM(订单量) AS orders, SUM(收入) AS revenue, SUM(实付) AS paid, SUM(修正后净毛利) AS adjusted_profit, SUM(修正后净毛利) / NULLIF(SUM(收入), 0) AS adjusted_margin, SUM(推广费) AS promotion_cost, SUM(配送成本) AS delivery_cost, SUM(收入) / NULLIF(SUM(订单量), 0) AS revenue_per_order FROM base GROUP BY 门店名称), channel_summary AS (SELECT 'channel' AS grain, 渠道 AS name, SUM(订单量) AS orders, SUM(收入) AS revenue, SUM(实付) AS paid, SUM(修正后净毛利) AS adjusted_profit, SUM(修正后净毛利) / NULLIF(SUM(收入), 0) AS adjusted_margin, SUM(推广费) AS promotion_cost, SUM(配送成本) AS delivery_cost, SUM(收入) / NULLIF(SUM(订单量), 0) AS revenue_per_order FROM base GROUP BY 渠道), headline AS (SELECT 'headline' AS grain, '全部门店' AS name, SUM(订单量) AS orders, SUM(收入) AS revenue, SUM(实付) AS paid, SUM(修正后净毛利) AS adjusted_profit, SUM(修正后净毛利) / NULLIF(SUM(收入), 0) AS adjusted_margin, SUM(推广费) AS promotion_cost, SUM(配送成本) AS delivery_cost, SUM(收入) / NULLIF(SUM(订单量), 0) AS revenue_per_order FROM base) SELECT * FROM headline UNION ALL SELECT * FROM store_summary UNION ALL SELECT * FROM channel_summary;",
+          "description": "将后台导出的 20 条门店×渠道记录汇总为整体、门店和渠道三个分析层级",
+          "executed_at": "2026-07-14T12:00:00+08:00",
+          "filters": ["日期 = 2026-07-13"],
+          "tables_used": ["operating_analysis"],
+          "metric_definitions": ["单均收入 = 收入 / 订单量", "修正后净毛利率 = 修正后净毛利 / 收入"]
+        }
+      }
+    ],
+    "blocks": [
+      {"id": "title", "type": "markdown", "body": "# 7月13日经营分析报告"},
+      {
+        "id": "summary",
+        "type": "markdown",
+        "sourceId": "operating-analysis",
+        "body": "## Executive Summary\n\n- **整体经营稳健。** 6 家门店共完成 2,299 单，实现收入 6.50 万元，修正后净毛利 0.86 万元，修正后净毛利率 13.2%。\n- **张家界店同时领先规模与利润质量。** 收入 1.55 万元、修正后净毛利率 17.6%，是当日最强门店。\n- **南京迈皋桥需要优先复盘。** 收入位列第三，但修正后净毛利率仅 7.2%，明显低于整体水平。\n- **渠道利润结构分化。** 美团修正后净毛利率 16.7%，高于淘宝的 9.5%；淘宝虽贡献最多收入，但利润转化偏弱。"
+      },
+      {"id": "kpis", "type": "metric-strip", "cardIds": ["orders", "revenue", "avg-order", "adjusted-profit", "adjusted-margin"]},
+      {
+        "id": "definitions",
+        "type": "markdown",
+        "body": "## 口径说明\n\n本报告覆盖 2026 年 7 月 13 日的 6 家门店，共 20 条门店×渠道记录。规模指标按行求和；单均收入为总收入除以总订单量；修正后净毛利率为修正后净毛利除以收入。由于仅包含单日快照，报告用于横向识别门店与渠道差异，不用于判断长期趋势。"
+      },
+      {
+        "id": "store-finding",
+        "type": "markdown",
+        "sourceId": "operating-analysis",
+        "body": "## 张家界店领跑，南京迈皋桥利润承压\n\n张家界店贡献当日最高收入，并保持 17.6% 的修正后净毛利率；吾悦广场店规模第二，利润率接近整体水平。南京迈皋桥收入达到 1.07 万元，但修正后净毛利仅 772 元，利润率 7.2%，同时配送成本为六店最高。图中按收入展示各店规模，明细表补充利润和费用信息。"
+      },
+      {"id": "store-chart-block", "type": "chart", "chartId": "store-revenue"},
+      {"id": "store-table-block", "type": "table", "tableId": "store-performance"},
+      {
+        "id": "channel-finding",
+        "type": "markdown",
+        "sourceId": "operating-analysis",
+        "body": "## 美团利润转化明显优于淘宝\n\n淘宝与美团合计贡献 92.8% 的收入。淘宝收入略高，但修正后净毛利率仅 9.5%；美团收入相近，修正后净毛利率达到 16.7%，修正后净毛利比淘宝多约 2,053 元。POS 的利润率最高，但订单量仅 71 单，不能直接与主流线上渠道等量比较。"
+      },
+      {"id": "channel-chart-block", "type": "chart", "chartId": "channel-margin"},
+      {
+        "id": "next-steps",
+        "type": "markdown",
+        "body": "## 建议的下一步\n\n1. **优先复盘南京迈皋桥。** 检查配送成本、活动补贴结构和商品毛利组合，目标是先把修正后净毛利率拉回整体 13.2% 附近。\n2. **拆解淘宝利润缺口。** 对比淘宝与美团在优惠、配送、佣金和推广费上的单均差异，确认 7.2 个百分点利润率差距的主因。\n3. **复制张家界店组合。** 核对其高利润来自商品结构、履约成本还是活动策略，再选择可复制项推广到其他门店。\n4. **建立连续监控。** 至少补充近 7 天同口径数据，用于区分单日波动与持续性问题。"
+      },
+      {
+        "id": "questions",
+        "type": "markdown",
+        "body": "## 后续需要回答的问题\n\n- 南京迈皋桥的低利润率是当天异常，还是近 7 天持续现象？\n- 淘宝利润差距主要由哪一项成本或优惠驱动？\n- 各店商品品类和缺货率是否解释了收入与利润率差异？"
+      },
+      {
+        "id": "caveats",
+        "type": "markdown",
+        "body": "## 限制与假设\n\n数据来自后台导出的单日经营快照，未包含预算、同比/环比、商品品类、退款、缺货和客流信息。POS 渠道样本较小；所有建议均为需要进一步验证的经营排查方向，而非因果结论。"
+      }
+    ],
+    "cards": [
+      {"id": "orders", "dataset": "headline", "sourceId": "operating-analysis", "description": "当日所有门店与渠道的订单合计", "metrics": [{"label": "订单量", "field": "订单量", "format": "number"}]},
+      {"id": "revenue", "dataset": "headline", "sourceId": "operating-analysis", "description": "当日经营收入合计", "metrics": [{"label": "收入", "field": "收入", "format": "currency"}]},
+      {"id": "avg-order", "dataset": "headline", "sourceId": "operating-analysis", "description": "总收入除以总订单量", "metrics": [{"label": "单均收入", "field": "单均收入", "format": "currency"}]},
+      {"id": "adjusted-profit", "dataset": "headline", "sourceId": "operating-analysis", "description": "扣除运营管理费后的净毛利", "metrics": [{"label": "修正后净毛利", "field": "修正后净毛利", "format": "currency"}]},
+      {"id": "adjusted-margin", "dataset": "headline", "sourceId": "operating-analysis", "description": "修正后净毛利占收入的比例", "metrics": [{"label": "修正后净毛利率", "field": "修正后净毛利率", "format": "percent"}]}
+    ],
+    "charts": [
+      {
+        "id": "store-revenue",
+        "title": "门店收入",
+        "subtitle": "2026 年 7 月 13 日，按收入从高到低",
+        "showDescription": true,
+        "type": "bar",
+        "dataset": "stores",
+        "sourceId": "operating-analysis",
+        "encodings": {
+          "x": {"field": "门店名称", "type": "nominal", "label": "门店"},
+          "y": {"field": "收入", "type": "quantitative", "format": "currency", "label": "收入"},
+          "tooltip": [
+            {"field": "订单量", "type": "quantitative", "format": "number", "label": "订单量"},
+            {"field": "修正后净毛利率", "type": "quantitative", "format": "percent", "label": "修正后净毛利率"}
+          ]
+        },
+        "layout": "full"
+      },
+      {
+        "id": "channel-margin",
+        "title": "渠道修正后净毛利率",
+        "subtitle": "2026 年 7 月 13 日；POS 样本量较小",
+        "showDescription": true,
+        "type": "bar",
+        "dataset": "channels",
+        "sourceId": "operating-analysis",
+        "encodings": {
+          "x": {"field": "渠道", "type": "nominal", "label": "渠道"},
+          "y": {"field": "修正后净毛利率", "type": "quantitative", "format": "percent", "label": "修正后净毛利率"},
+          "tooltip": [
+            {"field": "订单量", "type": "quantitative", "format": "number", "label": "订单量"},
+            {"field": "收入", "type": "quantitative", "format": "currency", "label": "收入"}
+          ]
+        },
+        "layout": "full"
+      }
+    ],
+    "tables": [
+      {
+        "id": "store-performance",
+        "title": "门店经营明细",
+        "subtitle": "6 家门店的规模、利润与关键费用",
+        "showDescription": true,
+        "dataset": "stores",
+        "sourceId": "operating-analysis",
+        "defaultSort": {"field": "收入", "direction": "desc"},
+        "density": "spacious",
+        "layout": "full",
+        "columns": [
+          {"field": "门店名称", "label": "门店", "type": "text"},
+          {"field": "订单量", "label": "订单量", "format": "number"},
+          {"field": "收入", "label": "收入", "format": "currency"},
+          {"field": "修正后净毛利", "label": "修正后净毛利", "format": "currency"},
+          {"field": "修正后净毛利率", "label": "修正后净毛利率", "format": "percent"},
+          {"field": "配送成本", "label": "配送成本", "format": "currency"}
+        ]
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-07-14T12:00:00+08:00",
+    "status": "ready",
+    "datasets": {
+      "headline": [{"订单量": 2299, "收入": 64967.13, "单均收入": 28.2589, "修正后净毛利": 8561.922, "修正后净毛利率": 0.1317885}],
+      "stores": [
+        {"门店名称": "004张家界店", "订单量": 557, "收入": 15534.69, "实付": 13750.87, "修正后净毛利": 2740.28, "修正后净毛利率": 0.1764, "推广费": 238.22, "配送成本": 2432.42, "单均收入": 27.89},
+        {"门店名称": "001吾悦广场店", "订单量": 476, "收入": 13586.94, "实付": 12158.54, "修正后净毛利": 1766.15, "修正后净毛利率": 0.13, "推广费": 260, "配送成本": 2397.30, "单均收入": 28.54},
+        {"门店名称": "006南京迈皋桥", "订单量": 397, "收入": 10692.59, "实付": 9942.98, "修正后净毛利": 772.27, "修正后净毛利率": 0.0722, "推广费": 197.47, "配送成本": 2575.59, "单均收入": 26.93},
+        {"门店名称": "002业恒生活广场店", "订单量": 351, "收入": 9563.93, "实付": 8399.47, "修正后净毛利": 1309.92, "修正后净毛利率": 0.137, "推广费": 86.25, "配送成本": 1823.54, "单均收入": 27.25},
+        {"门店名称": "003彭州店", "订单量": 296, "收入": 8998.16, "实付": 8127.93, "修正后净毛利": 1280.47, "修正后净毛利率": 0.1423, "推广费": 184.92, "配送成本": 1565.36, "单均收入": 30.40},
+        {"门店名称": "005高邮店", "订单量": 222, "收入": 6590.82, "实付": 5554.37, "修正后净毛利": 692.83, "修正后净毛利率": 0.1051, "推广费": 135.28, "配送成本": 1171.22, "单均收入": 29.69}
+      ],
+      "channels": [
+        {"渠道": "淘宝", "订单量": 1006, "收入": 30576.20, "实付": 25450.03, "修正后净毛利": 2898.93, "修正后净毛利率": 0.0948, "推广费": 509.59, "配送成本": 5753.25, "单均收入": 30.39},
+        {"渠道": "美团", "订单量": 1105, "收入": 29709.01, "实付": 27627.19, "修正后净毛利": 4952.13, "修正后净毛利率": 0.1667, "推广费": 592.55, "配送成本": 5690.42, "单均收入": 26.89},
+        {"渠道": "京东", "订单量": 117, "收入": 3157.36, "实付": 3334.38, "修正后净毛利": 294.36, "修正后净毛利率": 0.0932, "推广费": 0, "配送成本": 510.76, "单均收入": 26.99},
+        {"渠道": "客无忧POS", "订单量": 71, "收入": 1524.56, "实付": 1522.56, "修正后净毛利": 416.50, "修正后净毛利率": 0.2732, "推广费": 0, "配送成本": 11, "单均收入": 21.47}
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "operating-analysis",
+      "label": "秒界后台导出 · 日维度经营分析.xlsx",
+      "path": "日维度经营分析.xlsx",
+      "query": {
+        "engine": "SQLite",
+        "sql": "WITH base AS (SELECT * FROM operating_analysis WHERE 日期 = '2026-07-13'), store_summary AS (SELECT 'store' AS grain, 门店名称 AS name, SUM(订单量) AS orders, SUM(收入) AS revenue, SUM(实付) AS paid, SUM(修正后净毛利) AS adjusted_profit, SUM(修正后净毛利) / NULLIF(SUM(收入), 0) AS adjusted_margin, SUM(推广费) AS promotion_cost, SUM(配送成本) AS delivery_cost, SUM(收入) / NULLIF(SUM(订单量), 0) AS revenue_per_order FROM base GROUP BY 门店名称), channel_summary AS (SELECT 'channel' AS grain, 渠道 AS name, SUM(订单量) AS orders, SUM(收入) AS revenue, SUM(实付) AS paid, SUM(修正后净毛利) AS adjusted_profit, SUM(修正后净毛利) / NULLIF(SUM(收入), 0) AS adjusted_margin, SUM(推广费) AS promotion_cost, SUM(配送成本) AS delivery_cost, SUM(收入) / NULLIF(SUM(订单量), 0) AS revenue_per_order FROM base GROUP BY 渠道), headline AS (SELECT 'headline' AS grain, '全部门店' AS name, SUM(订单量) AS orders, SUM(收入) AS revenue, SUM(实付) AS paid, SUM(修正后净毛利) AS adjusted_profit, SUM(修正后净毛利) / NULLIF(SUM(收入), 0) AS adjusted_margin, SUM(推广费) AS promotion_cost, SUM(配送成本) AS delivery_cost, SUM(收入) / NULLIF(SUM(订单量), 0) AS revenue_per_order FROM base) SELECT * FROM headline UNION ALL SELECT * FROM store_summary UNION ALL SELECT * FROM channel_summary;",
+        "description": "将后台导出的 20 条门店×渠道记录汇总为整体、门店和渠道三个分析层级",
+        "executed_at": "2026-07-14T12:00:00+08:00",
+        "filters": ["日期 = 2026-07-13"],
+        "tables_used": ["operating_analysis"],
+        "metric_definitions": ["单均收入 = 收入 / 订单量", "修正后净毛利率 = 修正后净毛利 / 收入"]
+      }
+    }
+  ]
+}

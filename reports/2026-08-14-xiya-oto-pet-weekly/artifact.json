@@ -1,6 +1,6 @@
 {
   "report": "喜鸭 OTO 宠物生活经营诊断",
-  "generatedAt": "2026-08-17",
+  "generatedAt": "2026-08-18",
   "latestWeek": "2026-W33",
   "periodStart": "2026-08-10",
   "periodEnd": "2026-08-16",
@@ -21,5 +21,10 @@
   "estimatedPaidGap": 48402.21,
   "skuPaidCoverage": 0.9999857789644545,
   "diagnosis": "六因素：曝光人数、点击率、点击后加购率、加购后下单率、下单用户人均购买件数、实付件单价",
-  "financeStatus": "W33财务数据受N+2延迟影响，成本与利润指标暂不更新"
+  "financeStatus": "W33完整财务商品明细已接入",
+  "productCost": 810270.51,
+  "productIncome": 1403810.62,
+  "productCostRate": 0.5771936066809162,
+  "costCategoryCoverage": 0.998189653981531,
+  "skuCostCoverage": 0.9466352764536357
 }
